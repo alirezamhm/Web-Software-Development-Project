@@ -1,5 +1,5 @@
 <script>
-    import Message from "$lib/components/Message.svelte";
+  import LogicTesting from "$lib/components/LogicTesting.svelte";
 </script>
-  
-<Message />
+
+<LogicTesting />
