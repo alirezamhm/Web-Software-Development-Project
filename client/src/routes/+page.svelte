@@ -1,5 +1,5 @@
 <script>
-  import LogicTesting from "$lib/components/LogicTesting.svelte";
+  import Todos from "$lib/components/Todos.svelte";
 </script>
 
-<LogicTesting />
+<Todos />
