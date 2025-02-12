@@ -1,0 +1,10 @@
+{
+  "deploy": {
+    "project": "fc3c9112-bced-49c0-9655-1a6d57f9e09c",
+    "exclude": [
+      "**/node_modules"
+    ],
+    "include": [],
+    "entrypoint": "https://jsr.io/@std/http/1.0.9/file_server.ts"
+  }
+}
