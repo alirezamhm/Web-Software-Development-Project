@@ -1,9 +1,16 @@
 <script>
-    let { todo, removeTodo } = $props();
+    import { useTodoState } from "$lib/states/todoState.svelte.js";
+    let todoState = useTodoState();
+
+    let { todo } = $props();
 </script>
 
-<input type="checkbox" bind:checked={todo.done} id={todo.id} />
+<input
+    type="checkbox"
+    onchange={() => todoState.changeDone(todo.id)}
+    id={todo.id}
+/>
 <label for={todo.id}>
     {todo.name} ({todo.done ? "done" : "not done"})
 </label>
-<button onclick={() => removeTodo(todo)}>Remove</button>
+<button onclick={() => todoState.remove(todo.id)}>Remove</button>

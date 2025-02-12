@@ -1,10 +1,11 @@
 <script>
-    let { todos } = $props();
+    import { useTodoState } from "$lib/states/todoState.svelte.js";
+    let todoState = useTodoState();
 
     const addTodo = (e) => {
         const todo = Object.fromEntries(new FormData(e.target));
         todo.id = crypto.randomUUID();
-        todos.push(todo);
+        todoState.add(todo);
         e.target.reset();
         e.preventDefault();
     };

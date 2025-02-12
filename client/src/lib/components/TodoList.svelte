@@ -1,13 +1,15 @@
 <script>
+    import { useTodoState } from "$lib/states/todoState.svelte.js";
+
     import TodoItem from "./TodoItem.svelte";
 
-    let { todos, removeTodo } = $props();
+    let todoState = useTodoState();
 </script>
 
 <ul>
-    {#each todos as todo}
+    {#each todoState.todos as todo}
         <li>
-            <TodoItem {todo} {removeTodo} />
+            <TodoItem {todo} />
         </li>
     {/each}
 </ul>
