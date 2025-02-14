@@ -2,6 +2,8 @@ import { Hono } from "@hono/hono";
 
 const courses = new Hono();
 
+let questions = [];
+
 courses.get("/", (c) => {
   return c.json({
     courses: [
@@ -20,34 +22,29 @@ courses.post("/", async (c) => {
   return c.json({ course: { "id": 3, "name": data.name } });
 });
 
-courses.get("/:id/topics", (c) => {
-  return c.json({
-    topics: [
-      { "id": 1, "name": "Topic 1" },
-      { "id": 2, "name": "Topic 2" }
-    ]
-  });
+courses.get("/:id/questions", (c) => {
+  return c.json(questions);
 });
 
-courses.get("/:cId/topics/:tId/posts", (c) => {
-  return c.json({
-    "posts": [
-      { "id": 1, "title": "Post 1" },
-      { "id": 2, "title": "Post 2" }]
-  });
+courses.post("/:id/questions", async (c) => {
+  const data = await c.req.json();
+  data.id = questions.length + 1;
+  data.upvotes = 0;
+  questions.push(data);
+  return c.json(data);
 });
 
-courses.get("/:cId/topics/:tId/posts/:pId", (c) => {
-  return c.json(
-    {
-      "post":
-        { "id": Number(c.req.param("pId")), "title": "Post Title" },
-      "answers": [
-        { "id": 1, "content": "Answer 1" },
-        { "id": 2, "content": "Answer 2" }
-      ]
-    }
-  );
+courses.post("/:id/questions/:qId/upvote", (c) => {
+  const question = questions.find(q => q.id === Number(c.req.param('qId')));
+  question.upvotes++;
+  return c.json(question);
+});
+
+courses.delete("/:id/questions/:qId", (c) => {
+  const qId = Number(c.req.param('qId'));
+  const question = questions.find(q => q.id === qId);
+  questions = questions.filter(q => q.id !== qId);
+  return c.json(question);
 });
 
 export default courses;
