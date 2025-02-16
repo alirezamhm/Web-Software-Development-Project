@@ -4,6 +4,10 @@
     import QuestionItem from "./QuestionItem.svelte";
 
     let questionState = useQuestionState();
+
+    $effect(async () => {
+        await questionState.load();
+    });
 </script>
 
 <ul>
