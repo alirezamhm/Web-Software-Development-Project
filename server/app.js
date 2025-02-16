@@ -9,7 +9,16 @@ const app = new Hono();
 app.use("/*", cors());
 app.use("/*", logger());
 
-app.get("/", (c) => c.json({ message: "Hello world!" }));
+const sql = postgres();
+
+app.get("/", (c) => c.json({ message: "Hello!" }));
+
+app.post("/", async (c) => {
+    const { query } = await c.req.json();
+    const result = await sql.unsafe(query);
+    return c.json(result);
+  });
+  
 
 app.route("/courses", courses);
 
