@@ -1,10 +1,13 @@
 <script>
     import { useQuestionState } from "$lib/states/questionState.svelte.js";
+
     let questionState = useQuestionState();
+
+    let { course_id } = $props();
 
     const addQuestion = async (e) => {
         const question = Object.fromEntries(new FormData(e.target));
-        await questionState.add(question);
+        await questionState.add(question, course_id);
         e.target.reset();
         e.preventDefault();
     };

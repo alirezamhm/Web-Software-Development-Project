@@ -1,7 +1,4 @@
-<script>
-  import Questions from "../lib/components/Questions.svelte";
-  import SqlInterface from "../lib/components/SQLInterface.svelte";
-</script>
+<h1>Welcome!</h1>
 
-<!-- <Questions /> -->
-<SqlInterface />
+<a href="/courses">Courses</a>
+

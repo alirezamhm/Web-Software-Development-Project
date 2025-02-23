@@ -4,16 +4,17 @@
     import QuestionItem from "./QuestionItem.svelte";
 
     let questionState = useQuestionState();
+    let { course_id } = $props();
 
     $effect(async () => {
-        await questionState.load();
+        await questionState.load(course_id);
     });
 </script>
 
 <ul>
     {#each questionState.questions as question}
         <li>
-            <QuestionItem {question} />
+            <QuestionItem question={question} course_id={course_id} />
         </li>
     {/each}
 </ul>

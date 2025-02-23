@@ -1,35 +1,30 @@
-import { browser } from "$app/environment";
 import * as questionsApi from "$lib/apis/questions-api.js";
 
 let questionState = $state([]);
 
-const loadQuestions = async () => {
-    questionState = await questionsApi.getQuestions();
+const loadQuestions = async (cId) => {
+    questionState = await questionsApi.getQuestions(cId);
 };
-
-if (browser) {
-    loadQuestions();
-}
 
 const useQuestionState = () => {
     return {
         get questions() {
             return questionState;
         },
-        load: async () => {
-            loadQuestions();
+        load: async (cId) => {
+            loadQuestions(cId);
         },
-        add: async (question) => {
-            const newQuestion = await questionsApi.addQuestion(question);
-            loadQuestions();
+        add: async (question, cId) => {
+            const newQuestion = await questionsApi.addQuestion(question, cId);
+            loadQuestions(cId);
         },
-        remove: async (id) => {
-            const removedQuestion = await questionsApi.deleteQuestion(id);
-            loadQuestions();
+        remove: async (qId, cId) => {
+            const removedQuestion = await questionsApi.deleteQuestion(qId, cId);
+            loadQuestions(cId);
         },
-        upvote: async (id) => {
-            const question = await questionsApi.upvoteQuestion(id);
-            loadQuestions();
+        upvote: async (qId, cId) => {
+            const question = await questionsApi.upvoteQuestion(qId, cId);
+            loadQuestions(cId);
         },
     }
 }
