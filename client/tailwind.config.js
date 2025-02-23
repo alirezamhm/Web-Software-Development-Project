@@ -13,7 +13,10 @@ export default {
   plugins: [
     forms,
     skeleton({
-      themes: [themes.cerberus],
+      themes: [
+        themes.hamlindigo,
+        themes.cerberus,
+      ],
     }),
   ],
 };

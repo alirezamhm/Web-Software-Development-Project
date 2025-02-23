@@ -13,12 +13,12 @@
     });
 </script>
 
-<h1>Course {course.name}</h1>
+<h1 class="h1">{course.name}</h1>
 
-<h2>Existing questions</h2>
+<h2 class="h2 mt-2">Existing questions</h2>
 
 <QuestionList course_id={course_id}/>
 
-<h2>Add Question</h2>
+<h2 class="h2 mt-4">Add Question</h2>
 
 <QuestionForm course_id={course_id}/>

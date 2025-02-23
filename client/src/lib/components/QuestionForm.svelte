@@ -13,10 +13,14 @@
     };
 </script>
 
-<form onsubmit={addQuestion}>
-    <label for="title">Title</label>
-    <input id="title" name="title" type="text" placeholder="Enter a title" />
-    <label for="text">Text</label>
-    <textarea id="text" name="text" placeholder="Enter the text"></textarea>
-    <input type="submit" value="Add Question" />
+<form onsubmit={addQuestion} class="space-y-4">
+    <label class="label" for="title">
+        <span class="label-text">Title</span>
+        <input class="input" id="title" name="title" type="text" placeholder="Enter title"/>
+    </label>
+    <label class="label">
+        <span class="label-text">Text</span>
+        <textarea class="textarea" id="text" name="text" rows="4" placeholder="Enter text"></textarea>
+      </label>
+    <button class="w-full btn preset-filled-primary-500" type="submit">Add question</button>
 </form>

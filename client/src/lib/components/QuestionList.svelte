@@ -11,9 +11,9 @@
     });
 </script>
 
-<ul>
+<ul class="space-y-4 flex flex-col">
     {#each questionState.questions as question}
-        <li>
+        <li >
             <QuestionItem question={question} course_id={course_id} />
         </li>
     {/each}

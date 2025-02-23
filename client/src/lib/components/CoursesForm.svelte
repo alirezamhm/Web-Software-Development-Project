@@ -11,8 +11,10 @@
     };
 </script>
 
-<form onsubmit={addCourse}>
-    <label for="name">Name</label>
-    <input id="name" name="name" type="text" placeholder="Enter course name" />
-    <input type="submit" value="Add Course" />
+<form onsubmit={addCourse} class="space-y-4">
+    <label class="label" for="name">
+        <span class="label-text">Name</span>
+        <input class="input" id="name" name="name" type="text" placeholder="Enter course name"/>
+    </label>
+    <button class="w-full btn preset-filled-primary-500" type="submit">Add course</button>
 </form>
