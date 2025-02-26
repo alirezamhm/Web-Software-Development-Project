@@ -4,20 +4,17 @@ import { logger } from "@hono/hono/logger";
 import { hash, verify } from "jsr:@denorg/scrypt@4.4.4";
 import { getCookie, setCookie } from "jsr:@hono/hono@4.6.5/cookie";
 import * as jwt from "jsr:@hono/hono@4.6.5/jwt";
+import postgres from "postgres";
 
 import courses from "./routes/courses.js";
 
+const app = new Hono();
+
 const COOKIE_KEY = "auth";
 const JWT_SECRET = "secret";
-
-const userMiddleware = async (c, next) => {
-    const token = getCookie(c, COOKIE_KEY);
-    const { payload } = jwt.decode(token, JWT_SECRET);
-    c.user = payload;
-    await next();
+const accessControlList = {
+    "/api/admin": ["ADMIN"],
 };
-
-const app = new Hono();
 
 app.use("/*", logger());
 app.use(
@@ -27,6 +24,42 @@ app.use(
         credentials: true,
     }),
 );
+
+const userMiddleware = async (c, next) => {
+    const token = getCookie(c, COOKIE_KEY);
+    if (!token) {
+        await next();
+        return;
+    }
+
+    const { payload } = jwt.decode(token, JWT_SECRET);
+    c.user = payload;
+    await next();
+};
+
+const aclMiddleware = async (c, next) => {
+    const roles = accessControlList[c.req.path];
+    if (!roles) {
+        await next();
+        return;
+    }
+
+    if (!c.user?.roles) {
+        c.status(401);
+        return c.json({ error: "Unauthorized" });
+    }
+
+    if (!c.user.roles.some((r) => roles.includes(r))) {
+        c.status(403);
+        return c.json({ error: "Forbidden" });
+    }
+
+    await next();
+};
+
+app.use("*", userMiddleware);
+
+app.use("*", aclMiddleware);
 
 app.get("/", (c) => c.json({ message: "Hello!" }));
 
@@ -64,9 +97,13 @@ app.post("/api/auth/login", async (c) => {
 
     const passwordValid = verify(data.password.trim(), user.password_hash);
     if (passwordValid) {
+        const rolesResult = await sql`SELECT role FROM user_roles WHERE user_id = ${user.id}`;
+        const roles = rolesResult.map((r) => r.role);
+
         const payload = {
             id: user.id,
-            exp: Math.floor(Date.now() / 1000) + 60,
+            roles,
+            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
         };
 
         const token = await jwt.sign(payload, JWT_SECRET);

@@ -4,7 +4,10 @@
   <nav class="ml-4">
     <ul class="flex space-x-4">
       <li><a class="anchor text-black" href="/">Home</a></li>
+      <li><a class="anchor text-black" href="/auth/register">Register</a></li>
+      <li><a class="anchor text-black" href="/auth/login">Login</a></li>
       <li><a class="anchor text-black" href="/courses">Courses</a></li>
+      <li><a class="anchor text-black" href="/notes">Notes</a></li>
     </ul>
   </nav>
 </header>
