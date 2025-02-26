@@ -8,6 +8,9 @@
 		"build": "vite build",
 		"preview": "vite preview"
 	},
+	"dependencies": {
+		"jose": "^6.0.7"
+	},
 	"devDependencies": {
 		"@skeletonlabs/skeleton": "^3.0.0-next.10",
 		"@skeletonlabs/skeleton-svelte": "^1.0.0-next.19",

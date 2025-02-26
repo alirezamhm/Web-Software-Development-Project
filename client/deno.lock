@@ -10,6 +10,7 @@
     "npm:@tailwindcss/forms@~0.5.10": "0.5.10_tailwindcss@3.4.13__postcss@8.5.3",
     "npm:@tailwindcss/postcss@^4.0.8": "4.0.8",
     "npm:autoprefixer@^10.4.20": "10.4.20_postcss@8.5.3",
+    "npm:jose@^6.0.7": "6.0.7",
     "npm:postcss@^8.5.3": "8.5.3",
     "npm:svelte@5": "5.19.2_acorn@8.14.0",
     "npm:tailwindcss@3.4.13": "3.4.13_postcss@8.5.3",
@@ -1058,6 +1059,9 @@
     "jiti@2.4.2": {
       "integrity": "sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A=="
     },
+    "jose@6.0.7": {
+      "integrity": "sha512-IEsxVzzz+j8mNYlZYSxqNNy9RHbPQSIh9R81ZEgYzjsgAeuLLqhXnHBbc0hEotW0r3j7u9PYYWDepWHdVUOdsQ=="
+    },
     "kleur@4.1.5": {
       "integrity": "sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ=="
     },
@@ -1559,6 +1563,7 @@
         "npm:@tailwindcss/forms@~0.5.10",
         "npm:@tailwindcss/postcss@^4.0.8",
         "npm:autoprefixer@^10.4.20",
+        "npm:jose@^6.0.7",
         "npm:postcss@^8.5.3",
         "npm:svelte@5",
         "npm:tailwindcss@3.4.13",

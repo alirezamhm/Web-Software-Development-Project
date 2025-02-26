@@ -3,8 +3,12 @@ import { cors } from "@hono/hono/cors";
 import { logger } from "@hono/hono/logger";
 import { hash, verify } from "jsr:@denorg/scrypt@4.4.4";
 import { getCookie, setCookie } from "jsr:@hono/hono@4.6.5/cookie";
+import * as jwt from "jsr:@hono/hono@4.6.5/jwt";
 
 import courses from "./routes/courses.js";
+
+const COOKIE_KEY = "auth";
+const JWT_SECRET = "secret";
 
 const app = new Hono();
 
@@ -23,8 +27,6 @@ app.route("/api/courses", courses);
 
 
 const sql = postgres();
-
-const COOKIE_KEY = "auth";
 
 app.post("/api/auth/register", async (c) => {
     const data = await c.req.json();
@@ -55,8 +57,15 @@ app.post("/api/auth/login", async (c) => {
 
     const passwordValid = verify(data.password.trim(), user.password_hash);
     if (passwordValid) {
+        const payload = {
+            id: user.id,
+            exp: Math.floor(Date.now() / 1000) + 60,
+        };
+
+        const token = await jwt.sign(payload, JWT_SECRET);
+
         // setting the cookie as the user id
-        setCookie(c, COOKIE_KEY, user.id, {
+        setCookie(c, COOKIE_KEY, token, {
             path: "/",
             domain: "localhost",
             httpOnly: true,
@@ -71,5 +80,39 @@ app.post("/api/auth/login", async (c) => {
         });
     }
 });
+
+app.post("/api/auth/verify", async (c) => {
+    const token = getCookie(c, COOKIE_KEY);
+    if (!token) {
+        c.status(401);
+        return c.json({
+            "message": "No token found!",
+        });
+    }
+
+    try {
+        const payload = await jwt.verify(token, JWT_SECRET);
+        payload.exp = Math.floor(Date.now() / 1000) + 60;
+
+        const refreshedToken = await jwt.sign(payload, JWT_SECRET);
+
+        setCookie(c, COOKIE_KEY, refreshedToken, {
+            path: "/",
+            domain: "localhost",
+            httpOnly: true,
+            sameSite: "lax",
+          });
+
+        return c.json({
+            "message": "Valid token!",
+        });
+    } catch (e) {
+        c.status(401);
+        return c.json({
+            "message": "Invalid token!",
+        });
+    }
+});
+
 
 export default app;
