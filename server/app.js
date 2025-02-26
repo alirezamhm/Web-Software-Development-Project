@@ -10,6 +10,13 @@ import courses from "./routes/courses.js";
 const COOKIE_KEY = "auth";
 const JWT_SECRET = "secret";
 
+const userMiddleware = async (c, next) => {
+    const token = getCookie(c, COOKIE_KEY);
+    const { payload } = jwt.decode(token, JWT_SECRET);
+    c.user = payload;
+    await next();
+};
+
 const app = new Hono();
 
 app.use("/*", logger());
@@ -81,38 +88,74 @@ app.post("/api/auth/login", async (c) => {
     }
 });
 
+
+app.use(
+    "/api/verify",
+    jwt.jwt({
+        cookie: COOKIE_KEY,
+        secret: JWT_SECRET,
+    }),
+);
 app.post("/api/auth/verify", async (c) => {
     const token = getCookie(c, COOKIE_KEY);
-    if (!token) {
-        c.status(401);
-        return c.json({
-            "message": "No token found!",
-        });
-    }
+    const payload = await jwt.verify(token, JWT_SECRET);
+    payload.exp = Math.floor(Date.now() / 1000) + 60;
 
-    try {
-        const payload = await jwt.verify(token, JWT_SECRET);
-        payload.exp = Math.floor(Date.now() / 1000) + 60;
+    const refreshedToken = await jwt.sign(payload, JWT_SECRET);
 
-        const refreshedToken = await jwt.sign(payload, JWT_SECRET);
+    setCookie(c, COOKIE_KEY, refreshedToken, {
+        path: "/",
+        domain: "localhost",
+        httpOnly: true,
+        sameSite: "lax",
+    });
 
-        setCookie(c, COOKIE_KEY, refreshedToken, {
-            path: "/",
-            domain: "localhost",
-            httpOnly: true,
-            sameSite: "lax",
-          });
-
-        return c.json({
-            "message": "Valid token!",
-        });
-    } catch (e) {
-        c.status(401);
-        return c.json({
-            "message": "Invalid token!",
-        });
-    }
+    return c.json({
+        "message": "Valid token!",
+    });
 });
 
+app.use(
+    "/api/users",
+    jwt.jwt({
+        cookie: COOKIE_KEY,
+        secret: JWT_SECRET,
+    }),
+);
+app.get("/api/users", async (c) => {
+    const result = await sql`SELECT email FROM users`;
+    return c.json(result);
+});
+
+app.use(
+    "/api/notes/*",
+    jwt.jwt({
+        cookie: COOKIE_KEY,
+        secret: JWT_SECRET,
+    }),
+);
+app.use("/api/notes/*", userMiddleware);
+
+app.get("/api/notes", async (c) => {
+    const notes = await sql`SELECT * FROM notes WHERE user_id = ${c.user.id}`;
+    return c.json(notes);
+});
+
+app.post("/api/notes", async (c) => {
+    const { text } = await c.req.json();
+    const result = await sql`INSERT INTO notes (user_id, text)
+      VALUES (${c.user.id}, ${text}) RETURNING *`;
+    return c.json(result[0]);
+});
+
+app.get("/api/notes/:id", async (c) => {
+    const notes = await sql`SELECT * FROM notes
+      WHERE id = ${c.req.param("id")} AND user_id = ${c.user.id}`;
+    if (notes.length <= 0) {
+        c.status(404);
+        return c.json({ error: "Note not found" });
+    }
+    return c.json(notes[0]);
+});
 
 export default app;
