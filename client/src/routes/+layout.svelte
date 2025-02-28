@@ -15,9 +15,9 @@
 <div class="flex flex-col h-full">
     <Header />
 
-    {#if data.user?.id}
-        <p>Hello {data.user?.id}!</p>
-        <p>Your roles are: {data.user?.roles.join(", ")}</p>
+    {#if data.user?.email}
+        <p>{data.user?.email}!</p>
+        <!-- <p>Your roles are: {data.user?.roles.join(", ")}</p> -->
     {/if}
 
     {#if data.user?.roles?.includes("ADMIN")}

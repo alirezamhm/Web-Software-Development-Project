@@ -10,8 +10,9 @@ import courses from "./routes/courses.js";
 
 const app = new Hono();
 
-const COOKIE_KEY = "auth";
-const JWT_SECRET = "secret";
+const COOKIE_KEY = "token";
+const JWT_SECRET = "wsd-project-secret";
+
 const accessControlList = {
     "/api/admin": ["ADMIN"],
 };
@@ -72,9 +73,11 @@ app.post("/api/auth/register", async (c) => {
     const data = await c.req.json();
 
     try {
-        const result = await sql`INSERT INTO users (email, password_hash)
-      VALUES (${data.email.trim().toLowerCase()},
-      ${hash(data.password.trim())}) RETURNING *`;
+        const result = await sql`INSERT INTO users (email, password_hash) VALUES 
+      (
+      ${data.email.trim().toLowerCase()},
+      ${hash(data.password.trim())}
+      ) RETURNING *`;
     } catch (error) { }
     finally {
         return c.json({ "message": `Confirmation email sent to address ${data.email.trim().toLowerCase()}.` });
@@ -89,7 +92,7 @@ app.post("/api/auth/login", async (c) => {
 
     if (result.length === 0) {
         return c.json({
-            "message": "User not found!",
+            "message": "Incorrect email or password.",
         });
     }
 
@@ -97,18 +100,17 @@ app.post("/api/auth/login", async (c) => {
 
     const passwordValid = verify(data.password.trim(), user.password_hash);
     if (passwordValid) {
-        const rolesResult = await sql`SELECT role FROM user_roles WHERE user_id = ${user.id}`;
-        const roles = rolesResult.map((r) => r.role);
+        // const rolesResult = await sql`SELECT role FROM user_roles WHERE user_id = ${user.id}`;
+        // const roles = rolesResult.map((r) => r.role);
 
         const payload = {
-            id: user.id,
-            roles,
-            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
+            email: user.email,
+            // roles,
+            // exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
         };
 
         const token = await jwt.sign(payload, JWT_SECRET);
 
-        // setting the cookie as the user id
         setCookie(c, COOKIE_KEY, token, {
             path: "/",
             domain: "localhost",
@@ -116,11 +118,11 @@ app.post("/api/auth/login", async (c) => {
             sameSite: "lax"
         });
         return c.json({
-            "message": `Logged in as user with id ${user.id}`,
+            "message": `Welcome!`,
         });
     } else {
         return c.json({
-            "message": "Invalid password!",
+            "message": "Incorrect email or password.",
         });
     }
 });
@@ -136,16 +138,16 @@ app.use(
 app.post("/api/auth/verify", async (c) => {
     const token = getCookie(c, COOKIE_KEY);
     const payload = await jwt.verify(token, JWT_SECRET);
-    payload.exp = Math.floor(Date.now() / 1000) + 60;
+    // payload.exp = Math.floor(Date.now() / 1000) + 60;
 
-    const refreshedToken = await jwt.sign(payload, JWT_SECRET);
+    // const refreshedToken = await jwt.sign(payload, JWT_SECRET);
 
-    setCookie(c, COOKIE_KEY, refreshedToken, {
-        path: "/",
-        domain: "localhost",
-        httpOnly: true,
-        sameSite: "lax",
-    });
+    // setCookie(c, COOKIE_KEY, refreshedToken, {
+    //     path: "/",
+    //     domain: "localhost",
+    //     httpOnly: true,
+    //     sameSite: "lax",
+    // });
 
     return c.json({
         "message": "Valid token!",

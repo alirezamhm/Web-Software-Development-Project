@@ -5,9 +5,9 @@ export const load = ({ params, url }) => {
         throw error(404, "Page not found.");
     }
 
-    if (url.searchParams.has("registered")) {
-        params.registered = true;
-    }
+    // if (url.searchParams.has("registered")) {
+    //     params.registered = true;
+    // }
 
     return params;
 };

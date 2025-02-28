@@ -9,4 +9,8 @@ const questionValidator = z.object({
     text: z.string().min(3),
 });
 
-export { courseValidator, questionValidator };
+const asnwerValidator = z.object({
+    text: z.string(),
+});
+
+export { courseValidator, questionValidator, asnwerValidator };

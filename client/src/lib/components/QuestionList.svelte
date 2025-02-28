@@ -14,7 +14,7 @@
 <ul class="space-y-4 flex flex-col">
     {#each questionState.questions as question}
         <li >
-            <QuestionItem question={question} course_id={course_id} />
+            <QuestionItem question={question} course_id={course_id} show_buttons={true} />
         </li>
     {/each}
 </ul>

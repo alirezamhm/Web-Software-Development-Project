@@ -10,11 +10,11 @@
     <p class="text-xl">{form.message}</p>
 {/if}
 
-{#if data.registered}
+<!-- {#if data.registered}
     <p class="text-xl">
         You have successfully registered. Please login to continue.
     </p>
-{/if}
+{/if} -->
 
 <form class="space-y-4" method="POST" action="?/{data.action}">
     <label class="label" for="email">

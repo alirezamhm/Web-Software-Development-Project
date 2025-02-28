@@ -3,7 +3,7 @@
 
     let questionState = useQuestionState();
 
-    let { question, course_id } = $props();
+    let { question, course_id, show_buttons } = $props();
 </script>
 
 <div
@@ -17,6 +17,7 @@
         </div>
     </article>
 
+    {#if show_buttons}
     <div class="mt-3 flex gap-2">
         <button
             class="btn preset-filled-primary-500"
@@ -34,4 +35,5 @@
             Delete
         </button>
     </div>
+    {/if}
 </div>
